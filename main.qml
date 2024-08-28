@@ -60,7 +60,7 @@ ApplicationWindow {
             Layout.alignment: Qt.AlignHCenter
             color: root.textColor
             text: qsTr("Виконайте логін у програму")
-            font.pixelSize: 16
+            font.pixelSize: 22
             font.bold: true
         }
 
