@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import "components"
 
 ApplicationWindow {
     id: root
@@ -157,6 +158,13 @@ ApplicationWindow {
                 }
                 onLongPressed: {
                     secretMessage.visible = true;
+                    secretMessageTimer.start();
+                }
+
+                Timer {
+                    id: secretMessageTimer
+                    interval: 5000 // 5 seconds
+                    onTriggered: secretMessage.visible = false
                 }
             }
         }
