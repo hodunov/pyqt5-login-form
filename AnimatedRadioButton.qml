@@ -10,6 +10,7 @@ RadioButton {
     property color textColor: "black"
     property color checkedColor: "white"
     property color uncheckedColor: "#BDBDBD"
+    property color checkedBorderColor: "green"
 
     // Assign the button's group
     ButtonGroup.group: buttonGroup
@@ -21,7 +22,7 @@ RadioButton {
         x: customRadioButton.leftPadding
         y: parent.height / 2 - height / 2
         radius: 10
-        border.color: customRadioButton.checked ? 'green' : uncheckedColor
+        border.color: customRadioButton.checked ? checkedBorderColor : uncheckedColor
         border.width: 2
         color: '#393939'
         Rectangle {

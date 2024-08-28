@@ -31,6 +31,13 @@ ApplicationWindow {
     property color buttonPressedColor: "#255340"
     property color focusColor: "#454B1B"
 
+    // Login button properties
+    property color loginButtonColor: "#4CAF50"
+    property color loginButtonPressedColor: "#388E3C"
+    property color loginButtonTextColor: "black"
+    property color successTextColor: "green"
+    property color errorTextColor: "red"
+
     // property QtObject backend
 
     // Component.onCompleted: {
@@ -135,9 +142,9 @@ ApplicationWindow {
                 Layout.alignment: Qt.AlignRight
                 Layout.preferredWidth: root.width * .4
                 buttonText: qsTr("Login")
-                buttonColor: "#4CAF50"  // Green color
-                buttonPressedColor: "#388E3C"  // Darker green when pressed
-                textColor: "black"
+                buttonColor: root.loginButtonColor
+                buttonPressedColor: root.loginButtonPressedColor
+                textColor: root.loginButtonTextColor
                 enabled: root.areCredentialsValid()
 
                 onClicked: {
@@ -145,7 +152,7 @@ ApplicationWindow {
                     var success = backend.login(usernameField.text, passwordField.text, locationComboBox.currentText, productionRadio.checked);
                     resultText.text = success ? qsTr("Login successful!") : qsTr("Please enter the correct username and password.\nNote that both fields may be case-sensitive.");
                     textTimer.start();
-                    resultText.color = success ? "green" : "red";
+                    resultText.color = success ? root.successTextColor : root.errorTextColor;
                     loginButton.enabled = true;
                 }
                 onLongPressed: {
