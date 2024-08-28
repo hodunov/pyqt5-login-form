@@ -6,25 +6,23 @@ import QtQuick.Layouts 1.15
 ApplicationWindow {
     id: root
     visible: true
-
     width: 400
-    height: 350
+    height: 400
     minimumWidth: 400
     maximumWidth: 400
-    maximumHeight: 350
-    minimumHeight: 350
+    maximumHeight: 400
+    minimumHeight: 400
 
-    // minimumWidth: 300
-    // maximumWidth: 300
-
-    // flags: Qt.FramelessWindowHint | Qt.Window
-
-    color: "#393939"
+    color: appBackgroundColor
     title: qsTr("Login Form")
+
+    // Remove the title bar and borders
+    flags: Qt.FramelessWindowHint | Qt.Window
 
     signal radioButtonChanged(bool isProd)
 
     // Color properties
+    property color appBackgroundColor: "#393939"
     property color backgroundColor: "#2C2C2C"
     property color textColor: "#DCE2D9"
     property color inputBackgroundColor: "#444"
@@ -47,14 +45,14 @@ ApplicationWindow {
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 20
-        spacing: 20  // Increased spacing between elements
+        spacing: 20
 
         // -----------------------------------------------------------------------------
         // Header section
         Text {
             Layout.alignment: Qt.AlignHCenter
             color: root.textColor
-            text: "Виконайте логін у програму"
+            text: qsTr("Виконайте логін у програму")
             font.pixelSize: 16
             font.bold: true
         }
@@ -74,14 +72,13 @@ ApplicationWindow {
 
             Text {
                 color: root.textColor
-                text: "Database:"
+                text: qsTr("Database:")
                 font.pixelSize: 16
             }
 
-            // TODO: fix radio buttons
             AnimatedRadioButton {
                 id: productionRadio
-                text: "production"
+                text: qsTr("production")
                 checked: true
                 textColor: root.textColor
                 buttonGroup: databaseGroup
@@ -89,7 +86,7 @@ ApplicationWindow {
             }
             AnimatedRadioButton {
                 id: debugRadio
-                text: "debug_production"
+                text: qsTr("debug_production")
                 textColor: root.textColor
                 buttonGroup: databaseGroup
                 onClicked: root.radioButtonChanged(false)
@@ -101,20 +98,22 @@ ApplicationWindow {
         AnimatedTextField {
             id: usernameField
             Layout.fillWidth: true
-            placeholderText: "Username"
+            placeholderText: qsTr("Username")
             fieldValidator: RegExpValidator {
                 regExp: /^[a-zA-Z0-9_-]{3,15}$/ // Validate username same as in the backend
             }
             onTextChanged: loginButton.enabled = root.areCredentialsValid()
+            showPasswordToggle: false
         }
 
         AnimatedTextField {
             id: passwordField
             Layout.fillWidth: true
-            placeholderText: "Password"
+            placeholderText: qsTr("Password")
             echoMode: TextInput.Password
             fieldValidator: null // Skip validator for password
             onTextChanged: loginButton.enabled = root.areCredentialsValid()
+            showPasswordToggle: true
         }
 
         // -----------------------------------------------------------------------------
@@ -133,18 +132,21 @@ ApplicationWindow {
 
             CustomButton {
                 id: loginButton
-                text: "Login"
                 Layout.alignment: Qt.AlignRight
                 Layout.preferredWidth: root.width * .4
-                buttonText: "Login"
+                buttonText: qsTr("Login")
                 buttonColor: "#4CAF50"  // Green color
                 buttonPressedColor: "#388E3C"  // Darker green when pressed
                 textColor: "black"
                 enabled: root.areCredentialsValid()
+
                 onClicked: {
+                    loginButton.enabled = false; // Disable the button
                     var success = backend.login(usernameField.text, passwordField.text, locationComboBox.currentText, productionRadio.checked);
-                    resultText.text = success ? "Login successful!" : "Login failed.";
+                    resultText.text = success ? qsTr("Login successful!") : qsTr("Please enter the correct username and password.\nNote that both fields may be case-sensitive.");
+                    textTimer.start();
                     resultText.color = success ? "green" : "red";
+                    loginButton.enabled = true;
                 }
                 onLongPressed: {
                     secretMessage.visible = true;
@@ -154,11 +156,17 @@ ApplicationWindow {
         Text {
             id: resultText
             Layout.alignment: Qt.AlignHCenter
+            font.pointSize: 14
+            Timer {
+                id: textTimer
+                interval: 5000
+                onTriggered: resultText.text = ""
+            }
         }
         // Easter egg message
         Text {
             id: secretMessage
-            text: "🎉 You found the secret! 🎉 Click me"
+            text: qsTr("🎉 You found the secret! 🎉 Click me")
             visible: false
             color: "green"
             font.bold: true
