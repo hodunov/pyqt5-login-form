@@ -6,6 +6,7 @@ TextField {
 
     // Optional validator property
     property var fieldValidator: null
+    property bool showPasswordToggle: false  // Property to optionally show the checkbox
 
     // Apply the validator only if provided
     validator: fieldValidator
@@ -49,6 +50,21 @@ TextField {
         } else {
             animatedTextField.color = unfocusedTextColor;
             backgroundRect.color = unfocusedBackgroundColor;
+        }
+    }
+
+    CheckBox {
+        id: showPasswordCheckBox
+        text: ""
+        width: 20
+        height: 20
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: passwordField.right
+        anchors.rightMargin: 10
+        visible: animatedTextField.showPasswordToggle  // Toggle visibility based on the property
+
+        onCheckedChanged: {
+            passwordField.echoMode = checked ? TextInput.Normal : TextInput.Password
         }
     }
 }
