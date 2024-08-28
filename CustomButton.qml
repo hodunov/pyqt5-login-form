@@ -26,13 +26,6 @@ Button {
     // Bind the enabled state
     enabled: enabled
 
-    // Use the passed onClicked handler
-    onClicked: {
-        if (enabled) {
-            customButton.clicked();  // Emit clicked signal
-        }
-    }
-
     // Expand the button on press
     onPressed: anim.start()
     SequentialAnimation {
@@ -56,6 +49,11 @@ Button {
     // Long press event
     MouseArea {
         anchors.fill: parent
+        onClicked: {
+            if (customButton.enabled) {
+                customButton.clicked();  // Emit clicked signal
+            }
+        }
         onPressed: {
             // Start the long press timer
             pressTimer.start();

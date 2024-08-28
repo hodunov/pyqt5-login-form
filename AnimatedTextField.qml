@@ -1,12 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtLocation 5.15
 
 TextField {
     id: animatedTextField
 
     // Optional validator property
     property var fieldValidator: null
-    property bool showPasswordToggle: false  // Property to optionally show the checkbox
+    property bool showPasswordToggle: false  // Property to optionally show the eye icon
 
     // Apply the validator only if provided
     validator: fieldValidator
@@ -53,18 +54,27 @@ TextField {
         }
     }
 
-    CheckBox {
-        id: showPasswordCheckBox
-        text: ""
+    Button {
+        id: toggleVisibilityButton
+        visible: animatedTextField.showPasswordToggle  // Toggle visibility based on the property
+        anchors.verticalCenter: parent.verticalCenter  // Align vertically with the TextField
+        anchors.right: parent.right
+        anchors.rightMargin: 10
         width: 20
         height: 20
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: passwordField.right
-        anchors.rightMargin: 10
-        visible: animatedTextField.showPasswordToggle  // Toggle visibility based on the property
+        background: Rectangle {
+            color: "transparent"
+        }
 
-        onCheckedChanged: {
-            passwordField.echoMode = checked ? TextInput.Normal : TextInput.Password
+        Image {
+            id: img
+            anchors.fill: parent
+            source: animatedTextField.echoMode === TextInput.Password ? "images/eye-closed.svg" : "images/eye-open.svg"
+        }
+
+
+        onClicked: {
+            animatedTextField.echoMode = animatedTextField.echoMode === TextInput.Password ? TextInput.Normal : TextInput.Password;
         }
     }
 }
