@@ -1,7 +1,7 @@
 import logging
 import requests
 
-from typing import Any
+from typing import Any, Optional, Union
 from urllib.parse import urljoin
 
 logging.basicConfig(
@@ -10,58 +10,82 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-class BaseAPI:
-    def build_url(self, base_url: str, endpoint: str) -> str:
+class APIConfig:
+    PROD_API_URL = "https://m11g.prod.ajax.systems/"
+    DEBUG_API_URL = "https://m11g-x.stage.ajax.systems/"
+    DEFAULT_HEADERS = {
+        "Content-Type": "application/json",
+        "X-SoftVersion": "1.38.0",
+        "X-RequestUUID": "LocalTesting",
+        "accept": "application/json",
+    }
+    TIMEOUT = 10
+
+
+class APIError(Exception):
+    def __init__(self, message: str, response: Optional[requests.Response] = None):
+        self.message = message
+        self.response = response
+        super().__init__(self.message)
+
+
+class BaseAPIClient:
+    def __init__(self, is_prod: bool = False):
+        self.base_url = APIConfig.PROD_API_URL if is_prod else APIConfig.DEBUG_API_URL
+        self.headers = APIConfig.DEFAULT_HEADERS.copy()
+
+    @staticmethod
+    def build_url(base_url: str, endpoint: str) -> str:
         return urljoin(base_url, endpoint)
 
     def _make_request(
-        self, method: str, url: str, data: dict[str, Any] | None = None
+        self, method: str, endpoint: str, data: Optional[dict[str, Any]] = None
     ) -> requests.Response:
+        url = self.build_url(self.base_url, endpoint)
         try:
             response = requests.request(
                 method,
                 url,
                 headers=self.headers,
                 json=data,
-                timeout=10,
+                timeout=APIConfig.TIMEOUT,
             )
-            response.raise_for_status()
-        except requests.RequestException:
+            if response and response.status_code not in [200, 400]:
+                response.raise_for_status()
             return response
-        else:
-            return response
+        except requests.RequestException as e:
+            logger.error("API request failed %s", str(e))
+            raise APIError(
+                f"API request failed: {e}", response=getattr(e, "response", None)
+            )
 
-    def fetch_data(self, endpoint: str) -> list:
+    def fetch_data(self, endpoint: str) -> Union[list, dict]:
         response = self._make_request("GET", endpoint)
-        return response.json() if response else []
+        try:
+            return response.json()
+        except ValueError:
+            logger.error("Failed to parse JSON response")
+            raise APIError("Failed to parse JSON response", response=response)
 
 
-class ConnectAPI(BaseAPI):
-    def __init__(self, is_prod: bool = False) -> None:
-        # https://ajaxsystems.atlassian.net/wiki/spaces/AUT/pages/2244445272/M11G+API+servers
-        self.prod_api_url: str = "https://m11g.prod.ajax.systems/"
-        self.debug_api_url: str = "https://m11g-x.stage.ajax.systems/"
-        self.api_url = self.prod_api_url if is_prod else self.debug_api_url
-        self.token: str
-        self.headers = {
-            "Content-Type": "application/json",
-            "X-SoftVersion": "1.38.0",
-            "X-RequestUUID": "LocalTesting",
-            "accept": "application/json",
-        }
+class AjaxAPIClient(BaseAPIClient):
+    def __init__(self, is_prod: bool = False):
+        self.base_url = APIConfig.PROD_API_URL if is_prod else APIConfig.DEBUG_API_URL
+        self.headers = APIConfig.DEFAULT_HEADERS.copy()
 
-    def post_login(self, username: str, password: str) -> str:
+    def login(self, username: str, password: str, *args, **kwargs) -> dict:
         data = {"username": username, "password": password}
-        response = self._make_request("POST", "/core-db/api/v1/auth_api/", data)
-        token_data = response.json()
-        self.token = token_data.get("token", None)
-        return token_data
+        response = self._make_request(
+            "POST", "/core-db/api/v1/auth_api/", data
+        )
+        try:
+            return response.json()
+        except ValueError:
+            logger.error("Failed to parse JSON response from login")
+            raise APIError(
+                "Failed to parse JSON response from login", response=response
+            )
 
-    def fetch_locations(self, is_prod: bool = False) -> list:
-        """
-        Fetches all locations from the API
-        """
-        base_url = self.prod_api_url if is_prod else self.debug_api_url
-        logger.info("Fetching locations from %s", base_url)
-        url = self.build_url(base_url, "/core-db/api/v1/general/prod_location/")
-        return self.fetch_data(url)
+    def fetch_locations(self) -> list:
+        logger.info(f"Fetching locations from {self.base_url}")
+        return self.fetch_data("/core-db/api/v1/general/prod_location/")
