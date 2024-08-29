@@ -148,7 +148,7 @@ ApplicationWindow {
                 id: loginButton
                 Layout.alignment: Qt.AlignRight
                 Layout.preferredWidth: root.width * .4
-                buttonText: qsTr("Login")
+                buttonText: qsTr("Логін")
                 buttonColor: root.loginButtonColor
                 buttonPressedColor: root.loginButtonPressedColor
                 textColor: root.loginButtonTextColor
