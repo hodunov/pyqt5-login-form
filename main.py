@@ -31,7 +31,7 @@ class Backend(QObject):
         if self.is_logging_in:
             return
 
-        self.is_logging_in = True  # Set the flag
+        self.is_logging_in = True
 
         logger.info(
             "Login attempt: Username: %s, Password: %s, Location: %s, Is Prod: %s",
@@ -43,8 +43,12 @@ class Backend(QObject):
 
         api_client = AjaxAPIClient(is_prod=is_prod)
         response = api_client.login(username, password, is_prod, location)
+
+        logger.info("Login response: %s", response)
+
         if token := response.get("token", None):
             self.token = token
+
         self.is_logging_in = False
         return bool(self.token)
 
