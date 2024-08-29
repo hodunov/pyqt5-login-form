@@ -22,7 +22,7 @@ RadioButton {
         x: customRadioButton.leftPadding
         y: parent.height / 2 - height / 2
         radius: 10
-        border.color: customRadioButton.checked ? checkedBorderColor : uncheckedColor
+        border.color: customRadioButton.checked ? customRadioButton.checkedBorderColor : customRadioButton.uncheckedColor
         border.width: 2
         color: '#393939'
         Rectangle {
@@ -31,7 +31,7 @@ RadioButton {
             x: 4
             y: 4
             radius: 6
-            color: customRadioButton.checked ? checkedColor : "transparent"
+            color: customRadioButton.checked ? customRadioButton.checkedColor : "transparent"
             visible: customRadioButton.checked
         }
     }
@@ -40,7 +40,7 @@ RadioButton {
         text: customRadioButton.text
         font: customRadioButton.font
         opacity: enabled ? 1.0 : 0.3
-        color: textColor
+        color: customRadioButton.textColor
         verticalAlignment: Text.AlignVCenter
         leftPadding: customRadioButton.indicator.width + customRadioButton.spacing
     }
