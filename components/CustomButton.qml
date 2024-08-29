@@ -6,20 +6,15 @@ Button {
 
     // Properties to customize the component
     property string buttonText: "Button"
-    // Default button text
     property color buttonColor: "#21be2b"
-    // Default button color
     property color buttonPressedColor: "#17a81a"
-    // Default pressed color
     property color textColor: "#5DD0A1"
 
     signal longPressed()
 
-    // Default text color
     opacity: enabled ? 1 : 0.5
     // Bind the enabled state
     enabled: enabled
-    // Long press event
     onPressAndHold: {
         longPressed();
     }

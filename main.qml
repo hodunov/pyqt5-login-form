@@ -6,10 +6,6 @@ import QtQuick.Window 2.15
 import "components"
 
 ApplicationWindow {
-    // visibility: Window.FullScreen
-    // Remove the title bar and borders
-    // flags: Qt.FramelessWindowHint | Qt.Window
-
     id: root
 
     // Color properties
@@ -41,7 +37,6 @@ ApplicationWindow {
     color: "transparent"
     title: qsTr("Login Form")
 
-    // Rounded window
     Rectangle {
         color: "darkgray"
         anchors.fill: parent
@@ -52,9 +47,9 @@ ApplicationWindow {
 
         radius: 20
         width: 400
-        height: 350
-        anchors.centerIn: parent
+        height: 370
         // This keeps the form centered
+        anchors.centerIn: parent
         color: root.appBackgroundColor
 
         ColumnLayout {
@@ -80,8 +75,8 @@ ApplicationWindow {
                 color: root.textColor
                 opacity: 0.7
             }
-            // -----------------------------------------------------------------------------
 
+            // -----------------------------------------------------------------------------
             // Database section
             RowLayout {
                 id: databaseRow
@@ -147,7 +142,6 @@ ApplicationWindow {
             // Location section
             RowLayout {
                 id: locationRow
-
                 // https://forum.qt.io/topic/124353/what-s-wrong-with-alignment/8
                 Layout.minimumWidth: parent.width
 
@@ -155,24 +149,22 @@ ApplicationWindow {
                     id: locationComboBox
 
                     objectName: "locationComboBox"
-                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignLeft
-                    Layout.preferredWidth: root.width * 0.4
+                    Layout.preferredWidth: locationRow.width * 0.4
                 }
 
                 CustomButton {
                     id: loginButton
 
-                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignRight
-                    Layout.preferredWidth: root.width * 0.4
+                    Layout.preferredWidth: locationRow.width * 0.4
                     buttonText: qsTr("Логін")
                     buttonColor: root.loginButtonColor
                     buttonPressedColor: root.loginButtonPressedColor
                     textColor: root.loginButtonTextColor
                     enabled: root.areCredentialsValid()
                     onClicked: {
-                        loginButton.enabled = false; // Disable the button
+                        loginButton.enabled = false;
                         var success = backend.login(usernameField.text, passwordField.text, locationComboBox.currentText, productionRadio.checked);
                         resultText.text = success ? qsTr("Login successful!") : qsTr("Please enter the correct username and password.\nNote that both fields may be case-sensitive.");
                         textTimer.start();
@@ -209,8 +201,8 @@ ApplicationWindow {
                 }
 
             }
+            // -----------------------------------------------------------------------------
             // Easter egg message
-
             Text {
                 id: secretMessage
 
@@ -224,7 +216,6 @@ ApplicationWindow {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        // Open the URL
                         Qt.openUrlExternally("https://youtu.be/dQw4w9WgXcQ");
                     }
                     cursorShape: Qt.PointingHandCursor
