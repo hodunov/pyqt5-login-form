@@ -11,6 +11,7 @@ RadioButton {
     property color checkedColor: "white"
     property color uncheckedColor: "#BDBDBD"
     property color checkedBorderColor: "green"
+    property color itemColor: "#393939"
 
     // Assign the button's group
     ButtonGroup.group: buttonGroup
@@ -24,7 +25,8 @@ RadioButton {
         radius: 10
         border.color: customRadioButton.checked ? customRadioButton.checkedBorderColor : customRadioButton.uncheckedColor
         border.width: 2
-        color: '#393939'
+        color: customRadioButton.itemColor
+
         Rectangle {
             width: 12
             height: 12
@@ -34,14 +36,16 @@ RadioButton {
             color: customRadioButton.checked ? customRadioButton.checkedColor : "transparent"
             visible: customRadioButton.checked
         }
+
     }
 
     contentItem: Text {
         text: customRadioButton.text
         font: customRadioButton.font
-        opacity: enabled ? 1.0 : 0.3
+        opacity: enabled ? 1 : 0.3
         color: customRadioButton.textColor
         verticalAlignment: Text.AlignVCenter
         leftPadding: customRadioButton.indicator.width + customRadioButton.spacing
     }
+
 }

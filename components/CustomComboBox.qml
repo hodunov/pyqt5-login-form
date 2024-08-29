@@ -3,8 +3,6 @@ import QtQuick.Controls 2.15
 
 ComboBox {
     id: customComboBox
-    textRole: "text"
-    valueRole: "value"
 
     // Properties to customize the component
     property color pressedColor: "#17a81a"
@@ -12,26 +10,21 @@ ComboBox {
     property color inputBackgroundColor: "#444"
     property color textColor: "#5DD0A1"
     property color popupTextColor: "#DCE2D9"
-
     property color popupBackgroundColor: "#434343"
     property color highlightedBackgroundColor: "#838383"
     property color highlightedTextColor: "#e0e0e0"
 
+    textRole: "text"
+    valueRole: "value"
+
     indicator: Canvas {
         id: canvas
+
         x: customComboBox.width - width - customComboBox.rightPadding
         y: customComboBox.topPadding + (customComboBox.availableHeight - height) / 2
         width: 12
         height: 8
         contextType: "2d"
-
-        Connections {
-            target: customComboBox
-            function onPressedChanged() {
-                canvas.requestPaint();
-            }
-        }
-
         onPaint: {
             context.reset();
             context.moveTo(0, 0);
@@ -41,6 +34,15 @@ ComboBox {
             context.fillStyle = customComboBox.pressed ? customComboBox.pressedColor : customComboBox.unPressedColor;
             context.fill();
         }
+
+        Connections {
+            function onPressedChanged() {
+                canvas.requestPaint();
+            }
+
+            target: customComboBox
+        }
+
     }
 
     background: Rectangle {
@@ -72,7 +74,9 @@ ComboBox {
             model: customComboBox.popup.visible ? customComboBox.delegateModel : null
             currentIndex: customComboBox.highlightedIndex
 
-            ScrollIndicator.vertical: ScrollIndicator {}
+            ScrollIndicator.vertical: ScrollIndicator {
+            }
+
         }
 
         background: Rectangle {
@@ -80,10 +84,13 @@ ComboBox {
             radius: 7
             border.color: customComboBox.inputBackgroundColor
         }
+
     }
 
     delegate: ItemDelegate {
         width: customComboBox.width
+        highlighted: customComboBox.highlightedIndex === index
+
         contentItem: Text {
             text: customComboBox.textRole ? (Array.isArray(customComboBox.model) ? modelData[customComboBox.textRole] : model[customComboBox.textRole]) : modelData
             color: customComboBox.highlightedIndex === index ? customComboBox.highlightedTextColor : customComboBox.popupTextColor
@@ -91,9 +98,11 @@ ComboBox {
             elide: Text.ElideRight
             verticalAlignment: Text.AlignVCenter
         }
-        highlighted: customComboBox.highlightedIndex === index
+
         background: Rectangle {
             color: highlighted ? customComboBox.highlightedBackgroundColor : "transparent"
         }
+
     }
+
 }
