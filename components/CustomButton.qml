@@ -11,13 +11,13 @@ Button {
     opacity: enabled ? 1.0 : 0.5
 
     background: Rectangle {
-        color: customButton.down ? customButton.buttonPressedColor : customButton.buttonColor
+        color: customButton.pressed ? customButton.buttonPressedColor : customButton.buttonColor
         radius: 7
     }
 
     contentItem: Text {
         id: buttonText
-        text: customButton.buttonText  // Default text, can be set via the text property
+        text: customButton.buttonText
         color: customButton.textColor
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
@@ -27,51 +27,28 @@ Button {
     enabled: enabled
 
     // Expand the button on press
-    onPressed: anim.start()
-    SequentialAnimation {
-        id: anim
-        PropertyAnimation {
-            target: customButton
-            property: "scale"
-            to: 1.2
-            duration: 200
-            easing.type: Easing.InOutQuad
+    states: [
+        State {
+            name: "pressed"
+            when: customButton.pressed
+            PropertyChanges { target: customButton; scale: 1.2 }
         }
-        PropertyAnimation {
-            target: customButton
-            property: "scale"
-            to: 1.0
-            duration: 200
-            easing.type: Easing.InOutQuad
+    ]
+
+    transitions: [
+        Transition {
+            from: "*"; to: "pressed"
+            NumberAnimation { properties: "scale"; duration: 200; easing.type: Easing.InOutQuad }
+        },
+        Transition {
+            from: "pressed"; to: "*"
+            NumberAnimation { properties: "scale"; duration: 200; easing.type: Easing.InOutQuad }
         }
-    }
+    ]
 
     // Long press event
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            if (customButton.enabled) {
-                customButton.clicked();  // Emit clicked signal
-            }
-        }
-        onPressed: {
-            // Start the long press timer
-            pressTimer.start();
-        }
-        onReleased: {
-            // Stop the long press timer
-            pressTimer.stop();
-        }
-    }
-
-    Timer {
-        id: pressTimer
-        interval: 1000 // 1 second for long press
-        repeat: false
-        onTriggered: {
-            // Emit a signal for the long press event
-            longPressed();
-        }
+    onPressAndHold: {
+        longPressed();
     }
 
     signal longPressed
