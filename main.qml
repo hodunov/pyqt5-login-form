@@ -10,12 +10,11 @@ ApplicationWindow {
     id: root
     visible: true
     width: 400
-    height: 400
+    height: 350
     minimumWidth: 400
     maximumWidth: 400
-    maximumHeight: 400
-    minimumHeight: 400
-
+    maximumHeight: 350
+    minimumHeight: 350
 
     // Rounded window
     color: "transparent"
@@ -55,7 +54,10 @@ ApplicationWindow {
     }
 
     ColumnLayout {
-        anchors.fill: parent
+        // anchors.fill: parent
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.margins: 20
         spacing: 20
 
@@ -80,7 +82,7 @@ ApplicationWindow {
         RowLayout {
             id: databaseRow
             Layout.fillWidth: true
-            spacing: 10
+            spacing: 5
 
             Text {
                 color: root.textColor
