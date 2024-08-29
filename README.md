@@ -22,3 +22,15 @@ Activate the new virtual environment so that any Python command you run or packa
 ```console
 $ source .venv/bin/activate
 ```
+
+## Install dependencies
+
+```console
+$ pip install -r requirements/base.txt
+```
+
+## Run the app
+
+```console
+$ python main.py
+```
