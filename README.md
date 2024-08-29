@@ -7,6 +7,20 @@ $ pyenv install 3.10
 $ pyenv local 3.10
 ```
 
+## Copy .env.example to .env
+
+```console
+$ cp .env.example .env
+```
+
+## Fill in the .env file
+
+```console
+PROD_API_URL=<Ask Dev Team>
+
+DEBUG_API_URL=<Ask Dev Team>
+```
+
 ## Create a Virtual Environment
 
 To create a virtual environment, you can use the `venv` module that comes with Python.
