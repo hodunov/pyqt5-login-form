@@ -1,8 +1,10 @@
+import os
 import logging
 import requests
 
 from typing import Any, Optional, Union
 from urllib.parse import urljoin
+from dotenv import load_dotenv
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -10,9 +12,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# load environment variables
+load_dotenv()
+
+
 class APIConfig:
-    PROD_API_URL = "https://m11g.prod.ajax.systems/"
-    DEBUG_API_URL = "https://m11g-x.stage.ajax.systems/"
+    PROD_API_URL = os.getenv("PROD_API_URL", default="https://example.com/api/")
+    DEBUG_API_URL = os.getenv("DEBUG_API_URL", default="https://example.com/api/")
     DEFAULT_HEADERS = {
         "Content-Type": "application/json",
         "X-SoftVersion": "1.38.0",
@@ -75,9 +81,7 @@ class AjaxAPIClient(BaseAPIClient):
 
     def login(self, username: str, password: str, *args, **kwargs) -> dict:
         data = {"username": username, "password": password}
-        response = self._make_request(
-            "POST", "/core-db/api/v1/auth_api/", data
-        )
+        response = self._make_request("POST", "/core-db/api/v1/auth_api/", data)
         try:
             return response.json()
         except ValueError:
