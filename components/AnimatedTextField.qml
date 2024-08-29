@@ -26,7 +26,7 @@ TextField {
     background: Rectangle {
         id: backgroundRect
         color: animatedTextField.unfocusedBackgroundColor
-        radius: 5
+        radius: 7
 
         // Background color animation
         Behavior on color {

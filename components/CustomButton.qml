@@ -12,7 +12,7 @@ Button {
 
     background: Rectangle {
         color: customButton.down ? customButton.buttonPressedColor : customButton.buttonColor
-        radius: 5
+        radius: 7
     }
 
     contentItem: Text {

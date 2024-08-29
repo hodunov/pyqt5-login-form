@@ -39,12 +39,6 @@ ApplicationWindow {
     property color successTextColor: "green"
     property color errorTextColor: "red"
 
-    // property QtObject backend
-
-    // Component.onCompleted: {
-    //     radioButtonChanged(true);
-    // }
-
     function areCredentialsValid() {
         // Check if username and password are not empty
         return usernameField.text.length > 0 && passwordField.text.length > 0;

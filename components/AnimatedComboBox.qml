@@ -8,9 +8,14 @@ ComboBox {
 
     // Properties to customize the component
     property color pressedColor: "#17a81a"
-    property color unPressedColor: "#21be2b"
+    property color unPressedColor: "#e0e0e0"
     property color inputBackgroundColor: "#444"
     property color textColor: "#5DD0A1"
+    property color popupTextColor: "#DCE2D9"
+
+    property color popupBackgroundColor: "#434343"
+    property color highlightedBackgroundColor: "#838383"
+    property color highlightedTextColor: "#e0e0e0"
 
     indicator: Canvas {
         id: canvas
@@ -41,10 +46,10 @@ ComboBox {
     background: Rectangle {
         implicitWidth: 120
         implicitHeight: 30
-        border.color: customComboBox.pressed ? customComboBox.pressedColor : customComboBox.unPressedColor
+        border.color: customComboBox.pressed ? customComboBox.pressedColor : customComboBox.inputBackgroundColor
         border.width: customComboBox.visualFocus ? 2 : 1
         color: customComboBox.inputBackgroundColor
-        radius: 5
+        radius: 7
     }
 
     contentItem: Text {
@@ -53,5 +58,42 @@ ComboBox {
         text: customComboBox.displayText
         color: customComboBox.textColor
         verticalAlignment: Text.AlignVCenter
+    }
+
+    popup: Popup {
+        y: customComboBox.height
+        width: customComboBox.width
+        implicitHeight: contentItem.implicitHeight
+        padding: 1
+
+        contentItem: ListView {
+            clip: true
+            implicitHeight: contentHeight
+            model: customComboBox.popup.visible ? customComboBox.delegateModel : null
+            currentIndex: customComboBox.highlightedIndex
+
+            ScrollIndicator.vertical: ScrollIndicator {}
+        }
+
+        background: Rectangle {
+            color: customComboBox.popupBackgroundColor
+            radius: 7
+            border.color: customComboBox.inputBackgroundColor
+        }
+    }
+
+    delegate: ItemDelegate {
+        width: customComboBox.width
+        contentItem: Text {
+            text: customComboBox.textRole ? (Array.isArray(customComboBox.model) ? modelData[customComboBox.textRole] : model[customComboBox.textRole]) : modelData
+            color: customComboBox.highlightedIndex === index ? customComboBox.highlightedTextColor : customComboBox.popupTextColor
+            font: customComboBox.font
+            elide: Text.ElideRight
+            verticalAlignment: Text.AlignVCenter
+        }
+        highlighted: customComboBox.highlightedIndex === index
+        background: Rectangle {
+            color: highlighted ? customComboBox.highlightedBackgroundColor : "transparent"
+        }
     }
 }
