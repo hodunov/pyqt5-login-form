@@ -6,6 +6,10 @@ import QtQuick.Window 2.15
 import "components"
 
 ApplicationWindow {
+    // visibility: Window.FullScreen
+    // Remove the title bar and borders
+    // flags: Qt.FramelessWindowHint | Qt.Window
+
     id: root
 
     // Color properties
@@ -32,201 +36,208 @@ ApplicationWindow {
     }
 
     visible: true
-    width: 400
-    height: 350
-    minimumWidth: 400
-    maximumWidth: 400
-    maximumHeight: 350
-    minimumHeight: 350
+    width: 700
+    height: 700
     color: "transparent"
     title: qsTr("Login Form")
-    // Remove the title bar and borders
-    flags: Qt.FramelessWindowHint | Qt.Window
 
     // Rounded window
     Rectangle {
-        color: root.appBackgroundColor
-        radius: 20
+        color: "darkgray"
         anchors.fill: parent
     }
 
-    ColumnLayout {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: 20
-        spacing: 20
+    Rectangle {
+        id: loginForm
 
-        // -----------------------------------------------------------------------------
-        // Header section
-        Text {
-            Layout.alignment: Qt.AlignHCenter
-            color: root.textColor
-            text: qsTr("Виконайте логін у програму")
-            font.pixelSize: 22
-            font.bold: true
-        }
+        radius: 20
+        width: 400
+        height: 350
+        anchors.centerIn: parent
+        // This keeps the form centered
+        color: root.appBackgroundColor
 
-        Rectangle {
-            Layout.fillWidth: true
-            height: 2
-            color: root.textColor
-            opacity: 0.7
-        }
-        // -----------------------------------------------------------------------------
+        ColumnLayout {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 20
+            spacing: 20
 
-        // Database section
-        RowLayout {
-            id: databaseRow
+            // -----------------------------------------------------------------------------
+            // Header section
+            Text {
+                Layout.alignment: Qt.AlignHCenter
+                color: root.textColor
+                text: qsTr("Виконайте логін у програму")
+                font.pixelSize: 22
+                font.bold: true
+            }
 
-            Layout.fillWidth: true
-            spacing: 5
+            Rectangle {
+                Layout.fillWidth: true
+                height: 2
+                color: root.textColor
+                opacity: 0.7
+            }
+            // -----------------------------------------------------------------------------
+
+            // Database section
+            RowLayout {
+                id: databaseRow
+
+                Layout.fillWidth: true
+                spacing: 5
+
+                Text {
+                    color: root.textColor
+                    text: qsTr("Database:")
+                    font.pixelSize: 16
+                }
+
+                CustomRadioButton {
+                    id: productionRadio
+
+                    text: qsTr("production")
+                    checked: true
+                    textColor: root.textColor
+                    buttonGroup: databaseGroup
+                    onClicked: root.radioButtonChanged(true)
+                }
+
+                CustomRadioButton {
+                    id: debugRadio
+
+                    text: qsTr("debug_production")
+                    textColor: root.textColor
+                    buttonGroup: databaseGroup
+                    onClicked: root.radioButtonChanged(false)
+                }
+
+            }
+
+            // -----------------------------------------------------------------------------
+            // Form section
+            CustomTextField {
+                id: usernameField
+
+                Layout.fillWidth: true
+                placeholderText: qsTr("Username")
+                onTextChanged: loginButton.enabled = root.areCredentialsValid()
+                showPasswordToggle: false
+
+                fieldValidator: RegExpValidator {
+                    regExp: /^[a-zA-Z0-9_-]{3,15}$/ // Validate username same as in the backend
+                }
+
+            }
+
+            CustomTextField {
+                id: passwordField
+
+                Layout.fillWidth: true
+                placeholderText: qsTr("Password")
+                echoMode: TextInput.Password
+                fieldValidator: null // Skip validator for password
+                onTextChanged: loginButton.enabled = root.areCredentialsValid()
+                showPasswordToggle: true
+            }
+
+            // -----------------------------------------------------------------------------
+            // Location section
+            RowLayout {
+                id: locationRow
+
+                // https://forum.qt.io/topic/124353/what-s-wrong-with-alignment/8
+                Layout.minimumWidth: parent.width
+
+                CustomComboBox {
+                    id: locationComboBox
+
+                    objectName: "locationComboBox"
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.preferredWidth: root.width * 0.4
+                }
+
+                CustomButton {
+                    id: loginButton
+
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignRight
+                    Layout.preferredWidth: root.width * 0.4
+                    buttonText: qsTr("Логін")
+                    buttonColor: root.loginButtonColor
+                    buttonPressedColor: root.loginButtonPressedColor
+                    textColor: root.loginButtonTextColor
+                    enabled: root.areCredentialsValid()
+                    onClicked: {
+                        loginButton.enabled = false; // Disable the button
+                        var success = backend.login(usernameField.text, passwordField.text, locationComboBox.currentText, productionRadio.checked);
+                        resultText.text = success ? qsTr("Login successful!") : qsTr("Please enter the correct username and password.\nNote that both fields may be case-sensitive.");
+                        textTimer.start();
+                        resultText.color = success ? root.successTextColor : root.errorTextColor;
+                        loginButton.enabled = true;
+                    }
+                    onLongPressed: {
+                        secretMessage.visible = true;
+                        secretMessageTimer.start();
+                    }
+
+                    Timer {
+                        id: secretMessageTimer
+
+                        interval: 5000 // 5 seconds
+                        onTriggered: secretMessage.visible = false
+                    }
+
+                }
+
+            }
 
             Text {
-                color: root.textColor
-                text: qsTr("Database:")
-                font.pixelSize: 16
-            }
+                id: resultText
 
-            CustomRadioButton {
-                id: productionRadio
-
-                text: qsTr("production")
-                checked: true
-                textColor: root.textColor
-                buttonGroup: databaseGroup
-                onClicked: root.radioButtonChanged(true)
-            }
-
-            CustomRadioButton {
-                id: debugRadio
-
-                text: qsTr("debug_production")
-                textColor: root.textColor
-                buttonGroup: databaseGroup
-                onClicked: root.radioButtonChanged(false)
-            }
-
-        }
-
-        // -----------------------------------------------------------------------------
-        // Form section
-        CustomTextField {
-            id: usernameField
-
-            Layout.fillWidth: true
-            placeholderText: qsTr("Username")
-            onTextChanged: loginButton.enabled = root.areCredentialsValid()
-            showPasswordToggle: false
-
-            fieldValidator: RegExpValidator {
-                regExp: /^[a-zA-Z0-9_-]{3,15}$/ // Validate username same as in the backend
-            }
-
-        }
-
-        CustomTextField {
-            id: passwordField
-
-            Layout.fillWidth: true
-            placeholderText: qsTr("Password")
-            echoMode: TextInput.Password
-            fieldValidator: null // Skip validator for password
-            onTextChanged: loginButton.enabled = root.areCredentialsValid()
-            showPasswordToggle: true
-        }
-
-        // -----------------------------------------------------------------------------
-        // Location section
-        RowLayout {
-            id: locationRow
-
-            // https://forum.qt.io/topic/124353/what-s-wrong-with-alignment/8
-            Layout.minimumWidth: parent.width
-
-            CustomComboBox {
-                id: locationComboBox
-
-                objectName: "locationComboBox"
-                Layout.alignment: Qt.AlignLeft
-                Layout.preferredWidth: root.width * 0.4
-            }
-
-            CustomButton {
-                id: loginButton
-
-                Layout.alignment: Qt.AlignRight
-                Layout.preferredWidth: root.width * 0.4
-                buttonText: qsTr("Логін")
-                buttonColor: root.loginButtonColor
-                buttonPressedColor: root.loginButtonPressedColor
-                textColor: root.loginButtonTextColor
-                enabled: root.areCredentialsValid()
-                onClicked: {
-                    loginButton.enabled = false; // Disable the button
-                    var success = backend.login(usernameField.text, passwordField.text, locationComboBox.currentText, productionRadio.checked);
-                    resultText.text = success ? qsTr("Login successful!") : qsTr("Please enter the correct username and password.\nNote that both fields may be case-sensitive.");
-                    textTimer.start();
-                    resultText.color = success ? root.successTextColor : root.errorTextColor;
-                    loginButton.enabled = true;
-                }
-                onLongPressed: {
-                    secretMessage.visible = true;
-                    secretMessageTimer.start();
-                }
+                Layout.alignment: Qt.AlignHCenter
+                font.pointSize: 14
 
                 Timer {
-                    id: secretMessageTimer
+                    id: textTimer
 
-                    interval: 5000 // 5 seconds
-                    onTriggered: secretMessage.visible = false
+                    interval: 5000
+                    onTriggered: resultText.text = ""
+                }
+
+            }
+            // Easter egg message
+
+            Text {
+                id: secretMessage
+
+                text: qsTr("🎉 You found the secret! 🎉 Click me")
+                visible: false
+                color: "green"
+                font.bold: true
+                font.pointSize: 14
+                Layout.alignment: Qt.AlignHCenter
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        // Open the URL
+                        Qt.openUrlExternally("https://youtu.be/dQw4w9WgXcQ");
+                    }
+                    cursorShape: Qt.PointingHandCursor
                 }
 
             }
 
         }
 
-        Text {
-            id: resultText
-
-            Layout.alignment: Qt.AlignHCenter
-            font.pointSize: 14
-
-            Timer {
-                id: textTimer
-
-                interval: 5000
-                onTriggered: resultText.text = ""
-            }
-
-        }
-        // Easter egg message
-
-        Text {
-            id: secretMessage
-
-            text: qsTr("🎉 You found the secret! 🎉 Click me")
-            visible: false
-            color: "green"
-            font.bold: true
-            font.pointSize: 14
-            Layout.alignment: Qt.AlignHCenter
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    // Open the URL
-                    Qt.openUrlExternally("https://youtu.be/dQw4w9WgXcQ");
-                }
-                cursorShape: Qt.PointingHandCursor
-            }
-
+        ButtonGroup {
+            id: databaseGroup
         }
 
-    }
-
-    ButtonGroup {
-        id: databaseGroup
     }
 
 }
