@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 import QtLocation 5.15
 
 TextField {
-    id: animatedTextField
+    id: customTextField
 
     // Optional validator property
     property var fieldValidator: null
@@ -21,11 +21,11 @@ TextField {
     property color unfocusedBackgroundColor: "#444"
 
     color: unfocusedTextColor
-    placeholderTextColor: animatedTextField.unfocusedTextColor
+    placeholderTextColor: customTextField.unfocusedTextColor
 
     background: Rectangle {
         id: backgroundRect
-        color: animatedTextField.unfocusedBackgroundColor
+        color: customTextField.unfocusedBackgroundColor
         radius: 7
 
         // Background color animation
@@ -46,17 +46,17 @@ TextField {
     // Focus change handler
     onActiveFocusChanged: {
         if (activeFocus) {
-            animatedTextField.color = focusedTextColor;
+            customTextField.color = focusedTextColor;
             backgroundRect.color = focusedBackgroundColor;
         } else {
-            animatedTextField.color = unfocusedTextColor;
+            customTextField.color = unfocusedTextColor;
             backgroundRect.color = unfocusedBackgroundColor;
         }
     }
 
     Button {
         id: toggleVisibilityButton
-        visible: animatedTextField.showPasswordToggle  // Toggle visibility based on the property
+        visible: customTextField.showPasswordToggle  // Toggle visibility based on the property
         anchors.verticalCenter: parent.verticalCenter  // Align vertically with the TextField
         anchors.right: parent.right
         anchors.rightMargin: 10
@@ -69,12 +69,12 @@ TextField {
         Image {
             id: img
             anchors.fill: parent
-            source: animatedTextField.echoMode === TextInput.Password ? "images/eye-closed.svg" : "images/eye-open.svg"
+            source: customTextField.echoMode === TextInput.Password ? "images/eye-closed.svg" : "images/eye-open.svg"
         }
 
 
         onClicked: {
-            animatedTextField.echoMode = animatedTextField.echoMode === TextInput.Password ? TextInput.Normal : TextInput.Password;
+            customTextField.echoMode = customTextField.echoMode === TextInput.Password ? TextInput.Normal : TextInput.Password;
         }
     }
 }

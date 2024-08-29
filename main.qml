@@ -90,7 +90,7 @@ ApplicationWindow {
                 font.pixelSize: 16
             }
 
-            AnimatedRadioButton {
+            CustomRadioButton {
                 id: productionRadio
                 text: qsTr("production")
                 checked: true
@@ -98,7 +98,7 @@ ApplicationWindow {
                 buttonGroup: databaseGroup
                 onClicked: root.radioButtonChanged(true)
             }
-            AnimatedRadioButton {
+            CustomRadioButton {
                 id: debugRadio
                 text: qsTr("debug_production")
                 textColor: root.textColor
@@ -109,7 +109,7 @@ ApplicationWindow {
 
         // -----------------------------------------------------------------------------
         // Form section
-        AnimatedTextField {
+        CustomTextField {
             id: usernameField
             Layout.fillWidth: true
             placeholderText: qsTr("Username")
@@ -120,7 +120,7 @@ ApplicationWindow {
             showPasswordToggle: false
         }
 
-        AnimatedTextField {
+        CustomTextField {
             id: passwordField
             Layout.fillWidth: true
             placeholderText: qsTr("Password")
@@ -137,7 +137,7 @@ ApplicationWindow {
             // https://forum.qt.io/topic/124353/what-s-wrong-with-alignment/8
             Layout.minimumWidth: parent.width
 
-            AnimatedComboBox {
+            CustomComboBox {
                 id: locationComboBox
                 objectName: "locationComboBox"
                 Layout.alignment: Qt.AlignLeft
