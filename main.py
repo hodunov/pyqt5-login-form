@@ -19,7 +19,6 @@ class Backend(QObject):
 
     def __init__(self):
         super().__init__()
-        self.is_logging_in = False  # Flag to prevent multiple logins
         self.token = None
 
     @pyqtSlot(str, str, str, bool, result=bool)
@@ -30,9 +29,6 @@ class Backend(QObject):
         location: str,
         is_prod: bool = False,
     ) -> bool:
-        if self.is_logging_in:
-            return False
-
         if self.token:
             logger.info("Already logged in")
             return True
@@ -55,8 +51,6 @@ class Backend(QObject):
             logger.error("Login failed: %s", e)
             self.token = None
             return False
-        finally:
-            self.is_logging_in = False
 
         return bool(self.token)
 
