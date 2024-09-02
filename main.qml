@@ -129,7 +129,7 @@ ApplicationWindow {
                 showPasswordToggle: false
 
                 fieldValidator: RegExpValidator {
-                    regExp: /^[a-zA-Z0-9_-]{3,15}$/ // Validate username same as in the backend
+                    regExp: /^[a-zA-Z0-9_-]{3,}$/ // Validate username same as in the backend
                 }
 
             }
