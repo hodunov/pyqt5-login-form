@@ -89,26 +89,11 @@ class Backend(QObject):
         dropdown.setProperty("model", values)
 
 
-def print_debug_info():
-    import inspect
-    from PyQt5 import Qt
-
-    vers = [
-        "%s = %s" % (k, v)
-        for k, v in vars(Qt).items()
-        if k.lower().find("version") >= 0 and not inspect.isbuiltin(v)
-    ]
-    print("\n".join(sorted(vers)))
-    print("-" * 10, "\n")
-
-
 def handle_exception(exc_type, exc_value, exc_traceback):
     QMessageBox.critical(None, "Unhandled Exception", f"An error occurred: {exc_value}")
 
 
 if __name__ == "__main__":
-    print_debug_info()
-
     app = QApplication(sys.argv)
     engine = QQmlApplicationEngine()
 
