@@ -70,6 +70,7 @@ class Backend(QObject):
         logger.info("Fetched locations: %s, is_prod: %s", len(locations), is_prod)
         return [{"value": item["id"], "text": item["location"]} for item in locations]
 
+    @pyqtSlot(bool)
     def on_radio_button_changed(self, is_prod: bool):
         """
         Called when the radio button is changed
@@ -98,8 +99,6 @@ if __name__ == "__main__":
     if not engine.rootObjects():
         sys.exit(-1)
 
-    backend.root = engine.rootObjects()[0]
-    backend.root.radioButtonChanged.connect(backend.on_radio_button_changed)
     # Get data and prefill the dropdown with locations
     backend.on_radio_button_changed(False)
     backend.on_radio_button_changed(True)

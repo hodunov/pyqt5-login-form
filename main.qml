@@ -25,8 +25,6 @@ ApplicationWindow {
     property color successTextColor: "green"
     property color errorTextColor: "red"
 
-    signal radioButtonChanged(bool isProd)
-
     function areCredentialsValid() {
         // Check if username and password are not empty
         return usernameField.text.length > 0 && passwordField.text.length > 0;
@@ -106,7 +104,7 @@ ApplicationWindow {
                     checked: true
                     textColor: root.textColor
                     buttonGroup: databaseGroup
-                    onClicked: root.radioButtonChanged(true)
+                    onClicked: backend.on_radio_button_changed(true)
                 }
 
                 CustomRadioButton {
@@ -115,7 +113,7 @@ ApplicationWindow {
                     text: "debug_production"
                     textColor: root.textColor
                     buttonGroup: databaseGroup
-                    onClicked: root.radioButtonChanged(false)
+                    onClicked: backend.on_radio_button_changed(false)
                 }
 
             }
