@@ -3,7 +3,7 @@ import logging
 import sys
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtQml import QQmlApplicationEngine
-from PyQt5.QtCore import pyqtSlot, QObject, QUrl
+from PyQt5.QtCore import pyqtSlot, QObject, QUrl, pyqtSignal
 from api import AjaxAPIClient, APIError
 from functools import lru_cache
 
@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 class Backend(QObject):
+    dropdownUpdated = pyqtSignal(list)
+
     def __init__(self):
         super().__init__()
         self.is_logging_in = False  # Flag to prevent multiple logins
@@ -68,7 +70,6 @@ class Backend(QObject):
         logger.info("Fetched locations: %s, is_prod: %s", len(locations), is_prod)
         return [{"value": item["id"], "text": item["location"]} for item in locations]
 
-    @pyqtSlot(bool)
     def on_radio_button_changed(self, is_prod: bool):
         """
         Called when the radio button is changed
@@ -77,16 +78,7 @@ class Backend(QObject):
         logger.info("Database button changed to %s", db_type)
         # Perform API call based on the selected option
         dropdown_values = self.get_cached_data(is_prod)
-        # Update the dropdown in QML
-        self.update_dropdown(dropdown_values)
-
-    def update_dropdown(self, values):
-        """Find the dropdown in QML and update its model"""
-        dropdown = self.root.findChild(QObject, "locationComboBox")
-        if dropdown is None:
-            logger.error("Could not find locationComboBox in QML")
-            return
-        dropdown.setProperty("model", values)
+        self.dropdownUpdated.emit(dropdown_values)
 
 
 def handle_exception(exc_type, exc_value, exc_traceback):

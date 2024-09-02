@@ -38,6 +38,14 @@ ApplicationWindow {
     color: "transparent"
     title: "Login Form"
 
+    Connections {
+        target: backend
+
+        function onDropdownUpdated(values) {
+            locationComboBox.model = values;
+        }
+    }
+
     Rectangle {
         color: "darkgray"
         anchors.fill: parent
@@ -143,6 +151,7 @@ ApplicationWindow {
             // Location section
             RowLayout {
                 id: locationRow
+
                 // https://forum.qt.io/topic/124353/what-s-wrong-with-alignment/8
                 Layout.minimumWidth: parent.width
 
@@ -203,6 +212,7 @@ ApplicationWindow {
 
             }
             // -----------------------------------------------------------------------------
+
             // Easter egg message
             Text {
                 id: secretMessage
