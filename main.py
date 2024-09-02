@@ -4,7 +4,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtCore import pyqtSlot, QObject, QUrl
-from api import AjaxAPIClient
+from api import AjaxAPIClient, APIError
 from functools import lru_cache
 
 
@@ -29,10 +29,13 @@ class Backend(QObject):
         is_prod: bool = False,
     ) -> bool:
         if self.is_logging_in:
-            return
+            return False
+
+        if self.token:
+            logger.info("Already logged in")
+            return True
 
         self.is_logging_in = True
-
         logger.info(
             "Login attempt: Username: %s, Password: %s, Location: %s, Is Prod: %s",
             username,
@@ -41,15 +44,18 @@ class Backend(QObject):
             is_prod,
         )
 
-        api_client = AjaxAPIClient(is_prod=is_prod)
-        response = api_client.login(username, password, is_prod, location)
+        try:
+            api_client = AjaxAPIClient(is_prod=is_prod)
+            response = api_client.login(username, password, is_prod, location)
+            logger.info("Login response: %s", response)
+            self.token = response.get("token", None)
+        except (APIError, AttributeError) as e:
+            logger.error("Login failed: %s", e)
+            self.token = None
+            return False
+        finally:
+            self.is_logging_in = False
 
-        logger.info("Login response: %s", response)
-
-        if token := response.get("token", None):
-            self.token = token
-
-        self.is_logging_in = False
         return bool(self.token)
 
     @lru_cache()

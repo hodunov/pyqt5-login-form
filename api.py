@@ -50,28 +50,24 @@ class BaseAPIClient:
         url = self.build_url(self.base_url, endpoint)
         try:
             response = requests.request(
-                method,
-                url,
-                headers=self.headers,
-                json=data,
-                timeout=APIConfig.TIMEOUT,
+                method, url, headers=self.headers, json=data, timeout=10
             )
-            if response and response.status_code not in [200, 400]:
-                response.raise_for_status()
+            response.raise_for_status()
             return response
         except requests.RequestException as e:
             logger.error("API request failed %s", str(e))
-            raise APIError(
-                f"API request failed: {e}", response=getattr(e, "response", None)
-            )
+            return response
 
-    def fetch_data(self, endpoint: str) -> Union[list, dict]:
-        response = self._make_request("GET", endpoint)
+    def parse_response(self, response: requests.Response) -> Union[list, dict]:
         try:
             return response.json()
         except ValueError:
             logger.error("Failed to parse JSON response")
             raise APIError("Failed to parse JSON response", response=response)
+
+    def fetch_data(self, endpoint: str) -> Union[list, dict]:
+        response = self._make_request("GET", endpoint)
+        return self.parse_response(response)
 
 
 class AjaxAPIClient(BaseAPIClient):
@@ -82,13 +78,7 @@ class AjaxAPIClient(BaseAPIClient):
     def login(self, username: str, password: str, *args, **kwargs) -> dict:
         data = {"username": username, "password": password}
         response = self._make_request("POST", "/core-db/api/v1/auth_api/", data)
-        try:
-            return response.json()
-        except ValueError:
-            logger.error("Failed to parse JSON response from login")
-            raise APIError(
-                "Failed to parse JSON response from login", response=response
-            )
+        return self.parse_response(response)
 
     def fetch_locations(self) -> list:
         logger.info(f"Fetching locations from {self.base_url}")
