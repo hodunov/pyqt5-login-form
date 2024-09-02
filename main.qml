@@ -36,7 +36,7 @@ ApplicationWindow {
     width: 700
     height: 700
     color: "transparent"
-    title: qsTr("Login Form")
+    title: "Login Form"
 
     Rectangle {
         color: "darkgray"
@@ -65,7 +65,7 @@ ApplicationWindow {
             Text {
                 Layout.alignment: Qt.AlignHCenter
                 color: root.textColor
-                text: qsTr("Виконайте логін у програму")
+                text: "Виконайте логін у програму"
                 font.pixelSize: 22
                 font.bold: true
             }
@@ -87,14 +87,14 @@ ApplicationWindow {
 
                 Text {
                     color: root.textColor
-                    text: qsTr("Database:")
+                    text: "Database:"
                     font.pixelSize: 16
                 }
 
                 CustomRadioButton {
                     id: productionRadio
 
-                    text: qsTr("production")
+                    text: "production"
                     checked: true
                     textColor: root.textColor
                     buttonGroup: databaseGroup
@@ -104,7 +104,7 @@ ApplicationWindow {
                 CustomRadioButton {
                     id: debugRadio
 
-                    text: qsTr("debug_production")
+                    text: "debug_production"
                     textColor: root.textColor
                     buttonGroup: databaseGroup
                     onClicked: root.radioButtonChanged(false)
@@ -118,7 +118,7 @@ ApplicationWindow {
                 id: usernameField
 
                 Layout.fillWidth: true
-                placeholderText: qsTr("Username")
+                placeholderText: "Username"
                 onTextChanged: loginButton.enabled = root.areCredentialsValid()
                 showPasswordToggle: false
 
@@ -132,7 +132,7 @@ ApplicationWindow {
                 id: passwordField
 
                 Layout.fillWidth: true
-                placeholderText: qsTr("Password")
+                placeholderText: "Password"
                 echoMode: TextInput.Password
                 fieldValidator: null // Skip validator for password
                 onTextChanged: loginButton.enabled = root.areCredentialsValid()
@@ -159,7 +159,7 @@ ApplicationWindow {
 
                     Layout.alignment: Qt.AlignRight
                     Layout.preferredWidth: locationRow.width * 0.4
-                    buttonText: qsTr("Логін")
+                    buttonText: "Логін"
                     buttonColor: root.loginButtonColor
                     buttonPressedColor: root.loginButtonPressedColor
                     textColor: root.loginButtonTextColor
@@ -167,7 +167,7 @@ ApplicationWindow {
                     onClicked: {
                         loginButton.enabled = false;
                         var success = backend.login(usernameField.text, passwordField.text, locationComboBox.currentText, productionRadio.checked);
-                        resultText.text = success ? qsTr("Login successful!") : qsTr("Please enter the correct username and password.\nNote that both fields may be case-sensitive.");
+                        resultText.text = success ? "Login successful!" : "Please enter the correct username and password.\nNote that both fields may be case-sensitive.";
                         textTimer.start();
                         resultText.color = success ? root.successTextColor : root.errorTextColor;
                         loginButton.enabled = true;
@@ -207,7 +207,7 @@ ApplicationWindow {
             Text {
                 id: secretMessage
 
-                text: qsTr("🎉 You found the secret! 🎉 Click me")
+                text: "🎉 You found the secret! 🎉 Click me"
                 visible: false
                 color: "green"
                 font.bold: true
