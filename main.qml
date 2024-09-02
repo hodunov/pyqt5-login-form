@@ -151,14 +151,14 @@ ApplicationWindow {
 
                     objectName: "locationComboBox"
                     Layout.alignment: Qt.AlignLeft
-                    Layout.preferredWidth: locationRow.width * 0.4
+                    Layout.preferredWidth: loginForm.width * 0.4
                 }
 
                 CustomButton {
                     id: loginButton
 
                     Layout.alignment: Qt.AlignRight
-                    Layout.preferredWidth: locationRow.width * 0.4
+                    Layout.preferredWidth: loginForm.width * 0.4
                     buttonText: "Логін"
                     buttonColor: root.loginButtonColor
                     buttonPressedColor: root.loginButtonPressedColor
