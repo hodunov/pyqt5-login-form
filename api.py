@@ -71,10 +71,6 @@ class BaseAPIClient:
 
 
 class AjaxAPIClient(BaseAPIClient):
-    def __init__(self, is_prod: bool = False):
-        self.base_url = APIConfig.PROD_API_URL if is_prod else APIConfig.DEBUG_API_URL
-        self.headers = APIConfig.DEFAULT_HEADERS.copy()
-
     def login(self, username: str, password: str, *args, **kwargs) -> dict:
         data = {"username": username, "password": password}
         response = self._make_request("POST", "/core-db/api/v1/auth_api/", data)
