@@ -4,6 +4,7 @@ import QtQuick.Controls 2.15
 
 TextField {
     id: customTextField
+    objectName: "CustomTextField"
 
     // Optional validator property
     property var fieldValidator: null

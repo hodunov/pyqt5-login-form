@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 
 Button {
     id: customButton
+    objectName: "CustomButton"
 
     // Properties to customize the component
     property string buttonText: "Button"

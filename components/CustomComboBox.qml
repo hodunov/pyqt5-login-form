@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 
 ComboBox {
     id: customComboBox
+    objectName: "CustomComboBox"
 
     // Properties to customize the component
     property color pressedColor: "#17a81a"

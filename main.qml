@@ -7,6 +7,7 @@ import "components"
 
 ApplicationWindow {
     id: root
+    objectName: "LoginWindow"
 
     // Color properties
     property color appBackgroundColor: "#393939"

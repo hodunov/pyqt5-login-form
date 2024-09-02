@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 
 RadioButton {
     id: customRadioButton
+    objectName: "CustomRadioButton"
 
     // Properties to customize the component
     property string buttonText: "Radio Button"
